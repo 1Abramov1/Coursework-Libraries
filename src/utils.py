@@ -1,10 +1,13 @@
 from datetime import datetime
+
+import requests
 from pandas import DataFrame
 import pandas as pd
 import json
 
 
 URL = "https://api.apilayer.com/exchangerates_data/convert"
+API_KEY = "lLSU3JdlytNTvWwQmNBichQwsDgssXUV"
 
 def get_time_for_greeting(date_time: str) -> str:
     """ Функция возвращает приветствие в зависимости от текущего времени """
@@ -108,12 +111,39 @@ def get_currency(path_to_json: str) -> list[dict]:
     """
        Функция принимает на вход переменную path_to_json и возвращает Курс-валют
     """
+    currency_rates = []
     with open(path_to_json, "r", encoding="utf-8") as file:
         data = json.load(file)
         currences = data['user_currencies']
 
         for currence in currences:
+            params = {
+                "amount": 1,
+                "from": f"{currence}",
+                "to": "RUB"
+            }
+            headers = {
+                "apikey": f"{API_KEY}"
+            }
+            response = requests.request("GET", URL, headers=headers, data=params)
+
+            status_code = response.status_code
+            if status_code == 200:
+                result = response.json()
+                currency_code_response = result["query"]["from"]
+                currency_amount = round(result["result"], 2)
+                currency_rates.append({
+                  "currency": f"{currency_code_response}",
+                  "rate": f"{currency_amount}"
+                })
+
+        return currency_rates
 
 
+def get_stock(path_to_json: str) -> list[dict]:
+    stock_rates = []
+    with open(path_to_json, "r", encoding="utf-8") as file:
+        data = json.load(file)
+        stocks = data['user_stocks']
 
-
+        for stock in stocks:

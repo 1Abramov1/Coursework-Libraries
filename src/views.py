@@ -3,7 +3,7 @@ from typing import Dict, Any
 from src.utils import get_time_for_greeting
 from src.utils import get_data_time
 from src.utils import get_path_and_period
-from src.utils import get_card_with_spend, get_top_transactions, get_currency
+from src.utils import get_card_with_spend, get_top_transactions, get_currency, get_stock
 
 def main_info(date_time: str) -> Dict[str, Any] :
     """
@@ -25,12 +25,17 @@ def main_info(date_time: str) -> Dict[str, Any] :
     top_transactions = get_top_transactions(sorted_df, 5)
 
     # 4. Курс валют
-    currency = get_currency("../data/user_settings.json")
+    currency_rates = get_currency("../data/user_settings.json")
+
+    # 5. Стоимость акций из S&P 500
+    stock_prices = get_stock("../data/user_settings.json")
 
     data = {
         "greeting": greeting,
-        # "cards": cards,
-        # "top_transactions": top_transactions,
+        "cards": cards,
+        "top_transactions": top_transactions,
+        "currency_rates": currency_rates,
+        "stock_prices": stock_prices
     }
 
     json_data = json.dumps(data, ensure_ascii=False, indent=4)
