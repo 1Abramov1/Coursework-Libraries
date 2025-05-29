@@ -1,4 +1,4 @@
-from views import main_info
+from src.views import main_info
 
 
 if __name__ == "__main__":
