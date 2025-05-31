@@ -1,13 +1,16 @@
-from datetime import datetime
-
+from datetime import datetime, timedelta
+from pprint import pprint
 import requests
 from pandas import DataFrame
 import pandas as pd
 import json
 
 
-URL = "https://api.apilayer.com/exchangerates_data/convert"
-API_KEY = "lLSU3JdlytNTvWwQmNBichQwsDgssXUV"
+URL_Currense = "https://api.apilayer.com/exchangerates_data/convert"
+API_KEY_Currense = "lLSU3JdlytNTvWwQmNBichQwsDgssXUV"
+
+URL_Stocks = "https://www.alphavantage.co/query"
+API_KEY_Stocks = "RHOPUON4TD8ISUUV"
 
 def get_time_for_greeting(date_time: str) -> str:
     """ Функция возвращает приветствие в зависимости от текущего времени """
@@ -123,9 +126,9 @@ def get_currency(path_to_json: str) -> list[dict]:
                 "to": "RUB"
             }
             headers = {
-                "apikey": f"{API_KEY}"
+                "apikey": f"{API_KEY_Currense}"
             }
-            response = requests.request("GET", URL, headers=headers, data=params)
+            response = requests.request("GET", URL_Currense, headers=headers, data=params)
 
             status_code = response.status_code
             if status_code == 200:
@@ -147,3 +150,20 @@ def get_stock(path_to_json: str) -> list[dict]:
         stocks = data['user_stocks']
 
         for stock in stocks:
+            params = {
+                "function": "TIME_SERIES_DAILY",
+                "symbol": f"{stock}",
+                "apikey": f"{API_KEY_Stocks}"
+            }
+
+            response = requests.request("GET", URL_Stocks, params=params)
+            status_code = response.status_code
+            if status_code == 200:
+                result = response.json()
+                yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+                stock_response = result["Time Series (Daily)"][yesterday]["1. open"]
+                stock_rates.append({
+                    f"{stock}": f"{stock_response}"
+                })
+
+    return stock_rates
