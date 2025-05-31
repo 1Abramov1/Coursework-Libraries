@@ -10,4 +10,4 @@ if __name__ == "__main__":
 
      resul_services = anylize_cashback("../data/operations.xlsx", 2018, 3)
      print(resul_services)
-
+   

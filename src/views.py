@@ -13,7 +13,7 @@ def main_info(date_time: str) -> Dict[str, Any] :
     """
     # Производится срез всего excel на нужный диапозон
     time_period = get_data_time(date_time)
-    sorted_df = get_path_and_period("../data/operations.xlsx", time_period)
+    sorted_df = get_path_and_period("./data/operations.xlsx", time_period)
 
     # 1. Приветствие
     greeting = get_time_for_greeting(date_time)
@@ -25,10 +25,10 @@ def main_info(date_time: str) -> Dict[str, Any] :
     top_transactions = get_top_transactions(sorted_df, 5)
 
     # 4. Курс валют
-    currency_rates = get_currency("../data/user_settings.json")
+    currency_rates = get_currency("./data/user_settings.json")
 
     # 5. Стоимость акций из S&P 500
-    stock_prices = get_stock("../data/user_settings.json")
+    stock_prices = get_stock("./data/user_settings.json")
 
     data = {
         "greeting": greeting,
