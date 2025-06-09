@@ -4,13 +4,20 @@ version = "0.1.0"
 description = ""
 authors = ["Alexander Abramov <richesantiques9@gmail.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.13"
+freezegun = "^1.5.2"
 pandas = "^2.2.3"
 openpyxl = "^3.1.5"
 requests = "^2.32.3"
+python-dotenv = "^1.1.0"
 
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
 
 [build-system]
 requires = ["poetry-core"]
