@@ -1,5 +1,7 @@
 import unittest
+
 from src.utils import get_time_for_greeting
+
 
 class TestGreetingFunction(unittest.TestCase):
     def test_morning(self):
@@ -38,9 +40,9 @@ class TestGreetingFunction(unittest.TestCase):
 
 
 # Демонстрация работы функции
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Запуск тестов при выполнении скрипта
-    unittest.main(argv=[''], exit=False)
+    unittest.main(argv=[""], exit=False)
     print("\nДемонстрация работы функции:")
 
     test_times = [
@@ -54,4 +56,3 @@ if __name__ == '__main__':
     for time_str in test_times:
         greeting = get_time_for_greeting(time_str)
         print(f"{time_str} -> {greeting}")
-

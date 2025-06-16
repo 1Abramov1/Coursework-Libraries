@@ -1,25 +1,33 @@
 import json
+from datetime import datetime
+from typing import Dict
 
-import pandas as pd
+from src.logger_config import get_logger
+
+logger = get_logger("services")
 
 
-def analise_cashback(file_path: str, year: int, month: int) -> str:
-    """
-    Анализирует выгодные категории повышенного кешбэка и возвращает json
-    """
-    df = pd.read_excel(file_path)
-    df["Дата операции"] = pd.to_datetime(
-        df["Дата операции"], format="%d.%m.%Y %H:%M:%S"
-    )
+def analise_cashback(transactions: list[dict], year: int, month: int) -> str:
+    def is_valid_transaction(transaction_data: dict) -> bool:
+        try:
+            operation_date = datetime.strptime(transaction_data["Дата операции"], "%Y-%m-%d %H:%M:%S")
+            has_cashback = transaction_data.get("Кэшбэк", 0) > 0
+            is_negative_payment = float(transaction_data["Сумма платежа"]) < 0
+            is_correct_date = operation_date.year == year and operation_date.month == month
 
-    filtered_data = df[
-        (df["Дата операции"].dt.year == year) & (df["Дата операции"].dt.month == month)
-    ]
-    filtered_data = filtered_data[(filtered_data["Кэшбэк"] > 0)]
-    filtered_data = filtered_data[filtered_data["Сумма платежа"] < 0]
+            return is_correct_date and has_cashback and is_negative_payment
+        except (ValueError, KeyError):
+            return False
 
-    expenses_by_category = filtered_data.groupby("Категория")["Сумма платежа"].sum()
-    cashback_by_category = abs(expenses_by_category) // 100
+    logger.info("Выводит правильный формат даты время")
 
-    result = cashback_by_category.to_dict()
-    return json.dumps(result, ensure_ascii=False, indent=4)
+    filtered_data = filter(is_valid_transaction, transactions)
+
+    cashback_by_category: Dict[str, float] = {}
+    for transaction in filtered_data:
+        category = transaction["Категория"]
+        amount = abs(float(transaction["Сумма платежа"]))
+        cashback = amount // 100
+        cashback_by_category[category] = cashback_by_category.get(category, 0) + cashback
+
+    return json.dumps(cashback_by_category, ensure_ascii=False, indent=4)

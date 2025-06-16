@@ -1,7 +1,9 @@
 import json
+
 from src.views import main_info
 
 # Пример теста для проверки структуры JSON
+
 
 def test_main_info_structure():
     # Вызов функции main_info
